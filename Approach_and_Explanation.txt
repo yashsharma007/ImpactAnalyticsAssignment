@@ -1,0 +1,66 @@
+## Question
+
+In a university, your attendance determines whether you will be
+allowed to attend your graduation ceremony.
+You are not allowed to miss classes for four or more consecutive days.
+Your graduation ceremony is on the last day of the academic year,
+which is the Nth day.
+
+ 
+
+  Your task is to determine the following:
+
+1. The number of ways to attend classes over N days.
+2. The probability that you will miss your graduation ceremony.
+
+Represent the solution in the string format as "Answer of (2) / Answer
+of (1)", don't actually divide or reduce the fraction to decimal
+
+Test cases:
+
+for 5 days: 14/29
+for 10 days: 372/773
+
+## Approach
+
+There are two choice on each day either to attend or miss. Thus, total number of ways will be 2 ^ n. where n is number of days. Then there will be illegal ways i.e miss the classes for 4 or more days which should be excluded. After excuding illegal ways there will be combinations because of which ceremony will be missed or can be attended. The only way to miss the ceremony is to remain absent on ceremony day and this is what I have calculated through my code. Explanation of code is as follows:
+
+1. The totalPossibleWaysToAttendClass method calculates all possible combinations of attending or missing classes using the product of 'AP' repeated for the given number of days.
+
+2. The ineligibleWaysToAttendClass method filters and returns only the combinations where there are at least 4 consecutive absences.
+
+3. The eligibleWaysToAttendClass method calculates the number of ways to attend class that are not ineligible.
+
+4. The waysStudentMissesTheirGraduationCer method filters and returns combinations where the student is absent on the last day.
+
+5. The probabilitytoMissGradCeremony method calculates the probability of missing the graduation ceremony by dividing the number of ways the student misses the ceremony by the number of eligible ways to attend.
+
+
+Note: This approach may cause memory issue for bigger values of N.
+
+-------------------------------------------------------------------------------------------------------------------------
+To overcome the memory problem I have applied the same approach using Dynamic programing and code explation is as follows:
+
+A. The `countLegalMissWays(N)` function finds the legal missing ways and approach as follows.
+
+    1. Initialize a dynamic programming array dp with N + 1 elements, initialized to all zeroes.
+    2. Set dp[0] = 1 to represent the base case where there's one way to not miss when there are no days.
+    3. Iterate through the days from 1 to N:
+    4. For each day i, update dp[i] with dp[i - 1], meaning if the student is absent on day i, the ways to not miss on day i is the same as the ways to not miss on the previous day i - 1.
+    5. Then, add the ways for not missing on day i - 2, i - 3, and i - 4 if applicable.
+    6. Subtract cases where missing 4 or more consecutive days (if N >= 4) to get legal ways.
+    7. Return the count of legal ways to miss the ceremony on the Nth day.
+
+B. The countTotalNumberOfLegalWays(N) function works as follows:
+
+    1. Check if N is less than 4, in which case there's no way to miss for 4 or more consecutive days, so return 0.
+    2. Initialize a dynamic programming array dp with N + 1 elements.
+    3. Set the base cases:
+        a. dp[0] = 1: There's one way to be absent (absent for 0 days).
+        b. dp[1] = 2: Two ways to be absent (absent for 0 or 1 days).
+        c. dp[2] = 4: Four ways to be absent (absent for 0, 1, or 2 days).
+        d. dp[3] = 8: Eight ways to be absent (absent for 0, 1, 2, or 3 days).
+    4. Iterate through the days from 4 to N:
+    5. For each day i, update dp[i] by summing up the values of dp[i - 1], dp[i - 2], dp[i - 3], and dp[i - 4].
+    6. Calculate the total number of possible ways (2 ** N) and subtract the count of consecutive absent ways (dp[N]) to get the count of ways where the student is absent for 4 or more days consecutively.
+    7. Return this count.
